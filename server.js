@@ -1,6 +1,7 @@
 
 const express = require('express');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
+const chromium = require('chrome-aws-lambda');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
@@ -17,9 +18,11 @@ app.post('/medir-fibra', async (req, res) => {
 
     try {
         const browser = await puppeteer.launch({
-            headless: "new",
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: chromium.args,
+            executablePath: await chromium.executablePath,
+            headless: chromium.headless,
         });
+
         const page = await browser.newPage();
         await page.goto(url.replace("/olt/command", "/login"), { waitUntil: 'networkidle2' });
 
@@ -64,5 +67,5 @@ app.post('/medir-fibra', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`ToddNet backend con Puppeteer corriendo en puerto ${PORT}`);
+    console.log(`ToddNet backend con puppeteer-core activo en puerto ${PORT}`);
 });
