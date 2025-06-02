@@ -23,7 +23,6 @@ app.post('/medir-fibra', async (req, res) => {
         const page = await browser.newPage();
         await page.goto(url.replace("/olt/command", "/login"), { waitUntil: 'networkidle2' });
 
-        // Login
         await page.type('input[name="email"]', user);
         await page.type('input[name="password"]', pass);
         await Promise.all([
@@ -31,16 +30,12 @@ app.post('/medir-fibra', async (req, res) => {
             page.waitForNavigation({ waitUntil: 'networkidle2' })
         ]);
 
-        // Ir a la página de comando
         await page.goto(url, { waitUntil: 'networkidle2' });
-
-        // Llenar el formulario
         await page.select('select[name="olt"]', 'Arrecifes');
         await page.type('input[name="slot"]', slot.toString());
         await page.type('input[name="port"]', port.toString());
         await page.select('select[name="command"]', 'onu status');
 
-        // Enviar y esperar el resultado
         await Promise.all([
             page.click('button[type="submit"]'),
             page.waitForSelector('table.table')
